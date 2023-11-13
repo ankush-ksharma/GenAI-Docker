@@ -9,6 +9,7 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
+from falcon import Falcon
 from typing import List, Any
 from utils import BaseLogger
 
@@ -33,6 +34,7 @@ def load_embedding_model(embedding_model_name: str, logger=BaseLogger(), config=
     return embeddings, dimension
 
 
+
 def load_llm(llm_name: str, logger=BaseLogger(), config={}):
     if llm_name == "gpt-4":
         logger.info("LLM: Using GPT-4")
@@ -40,6 +42,13 @@ def load_llm(llm_name: str, logger=BaseLogger(), config={}):
     elif llm_name == "gpt-3.5":
         logger.info("LLM: Using GPT-3.5")
         return ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo", streaming=True)
+    elif llm_name == "falcon":
+        logger.info("LLM: Using Falcon40")
+        # Specify the path to your local model file
+        local_model_path = "/path/to/your/model/file"
+        # Load the model from the local file
+        falcon40_model = Falcon.load(local_model_path)
+        return falcon40_model
     elif len(llm_name):
         logger.info(f"LLM: Using Ollama: {llm_name}")
         return ChatOllama(
@@ -53,6 +62,7 @@ def load_llm(llm_name: str, logger=BaseLogger(), config={}):
         )
     logger.info("LLM: Using GPT-3.5")
     return ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo", streaming=True)
+
 
 
 def configure_llm_only_chain(llm):
