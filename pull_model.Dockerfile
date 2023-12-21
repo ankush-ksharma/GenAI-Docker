@@ -1,16 +1,26 @@
 #syntax = docker/dockerfile:1.4
 
+# Stage 1: Use ollama/ollama image
 FROM ollama/ollama:latest AS ollama
-FROM babashka/babashka:latest
 
-# just using as a client - never as a server
+# Stage 2: Use ubuntu as base image
+FROM ubuntu:latest
+
+# Copy ollama binary from Stage 1
 COPY --from=ollama /bin/ollama ./bin/ollama
 
-COPY <<EOF pull_model.clj
-(ns pull-model
-  (:require [babashka.process :as process]
-            [clojure.core.async :as async]))
+# Add the bash script directly in the Dockerfile
+RUN echo '#!/bin/bash\n\
+llm=$LLM\n\
+url=$OLLAMA_BASE_URL\n\
+echo "pulling ollama model $llm using $url"\n\
+if [[ -n "$llm" && -n "$url" && "$llm" != "gpt-4" && "$llm" != "gpt-3.5" ]]; then\n\
+  echo "OLLAMA_HOST=$url ./bin/ollama pull $llm"\n\
+else\n\
+  echo "OLLAMA model only pulled if both LLM and OLLAMA_BASE_URL are set and the LLM model is not gpt"\n\
+fi' > pull_model.sh
 
+<<<<<<< Updated upstream
 (try
   (let [llm (get (System/getenv) "LLM")
         url (get (System/getenv) "OLLAMA_BASE_URL")]
@@ -34,4 +44,10 @@ COPY <<EOF pull_model.clj
 EOF
 
 ENTRYPOINT ["bb", "-f", "pull_model.clj"]
+=======
+# Make the script executable
+RUN chmod +x ./pull_model.sh
+>>>>>>> Stashed changes
 
+# Run the script when a container is started from the image
+ENTRYPOINT ["./pull_model.sh"]
