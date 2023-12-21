@@ -38,7 +38,7 @@ def load_so_data(tag: str = "neo4j", page: int = 1) -> None:
         f"?pagesize=100&page={page}&order=desc&sort=creation&answers=1&tagged={tag}"
         "&site=stackoverflow&filter=!*236eb_eL9rai)MOSNZ-6D3Q6ZKb0buI*IVotWaTb"
     )
-    data = requests.get(so_api_base_url + parameters).json()
+    data = requests.get(so_api_base_url + parameters, verify= False).json()
     insert_so_data(data)
 
 
@@ -47,7 +47,7 @@ def load_high_score_so_data() -> None:
         f"?fromdate=1664150400&order=desc&sort=votes&site=stackoverflow&"
         "filter=!.DK56VBPooplF.)bWW5iOX32Fh1lcCkw1b_Y6Zkb7YD8.ZMhrR5.FRRsR6Z1uK8*Z5wPaONvyII"
     )
-    data = requests.get(so_api_base_url + parameters).json()
+    data = requests.get(so_api_base_url + parameters, verify= False).json()
     insert_so_data(data)
 
 

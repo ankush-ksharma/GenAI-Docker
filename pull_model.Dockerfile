@@ -11,6 +11,7 @@ COPY <<EOF pull_model.clj
   (:require [babashka.process :as process]
             [clojure.core.async :as async]))
 
+<<<<<<< Updated upstream
 (try
   (let [llm (get (System/getenv) "LLM")
         url (get (System/getenv) "OLLAMA_BASE_URL")]
@@ -34,4 +35,8 @@ COPY <<EOF pull_model.clj
 EOF
 
 ENTRYPOINT ["bb", "-f", "pull_model.clj"]
+=======
+# Make the script executable
+RUN chmod +x ./pull_model.sh
+>>>>>>> Stashed changes
 
